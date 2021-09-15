@@ -1,0 +1,28 @@
+{
+  "name": "cardano-warrior-bot",
+  "version": "1.0.0",
+  "description": "A community enabled bot for exploring NFT's by the CardanoWarrior game on the Cardano blockchain.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isuryanarayanan/CardanoWarriorBot.git"
+  },
+  "keywords": [
+    "cardano",
+    "cardanowarrior"
+  ],
+  "author": "isuryanarayanan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/isuryanarayanan/CardanoWarriorBot/issues"
+  },
+  "homepage": "https://github.com/isuryanarayanan/CardanoWarriorBot#readme",
+  "dependencies": {
+    "discord.js": "^13.1.0",
+    "nodemon": "^2.0.12"
+  },
+  "devDependencies": {}
+}

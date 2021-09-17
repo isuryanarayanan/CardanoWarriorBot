@@ -1,28 +1,38 @@
-// Require the necessary discord.js classes
-const { Client, Intents } = require("discord.js");
 const { BOT_TOKEN } = require("./config.json");
-
-// Create a new client instance
+const fs = require("fs");
+const { Client, Collection, Intents } = require("discord.js");
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
-// When the client is ready, run this code (only once)
+// Creating command collection
+client.commands = new Collection();
+const commandFiles = fs
+  .readdirSync("./commands")
+  .filter((file) => file.endsWith(".js"));
+
+for (const file of commandFiles) {
+  const command = require(`./commands/${file}`);
+  client.commands.set(command.data.name, command);
+}
+
 client.once("ready", () => {
   console.log("Ready!");
 });
 
-client.on('interactionCreate', async interaction => {
-	if (!interaction.isCommand()) return;
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isCommand()) return;
+  const command = client.commands.get(interaction.commandName);
 
-	const { commandName } = interaction;
+  if (!command) return;
 
-	if (commandName === 'pang') {
-		await interaction.reply('Pong!');
-	} else if (commandName === 'serverer') {
-		await interaction.reply('Server info.');
-	} else if (commandName === 'userer') {
-		await interaction.reply('User info.');
-	}
+  try {
+    await command.execute(interaction);
+  } catch (error) {
+    console.error(error);
+    await interaction.reply({
+      content: "There was an error while executing this command!",
+      ephemeral: true,
+    });
+  }
 });
 
-// Login to Discord with your client's token
 client.login(BOT_TOKEN);

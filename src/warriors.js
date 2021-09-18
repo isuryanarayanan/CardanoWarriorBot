@@ -1,3 +1,15 @@
+// File to test out blockfrost
+// IGNORE
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 const { BOT_TOKEN, project_id } = require("./config.json");
 var XMLHttpRequest = require("xhr2");
 
@@ -34,9 +46,8 @@ function getAssets(tag) {
     xhr.send(JSON.stringify(tag));
   });
   promise.then((data) => {
-		response = JSON.parse(data.response)
-		console.log(response.onchain_metadata)
-
+    response = JSON.parse(data.response);
+    console.log(response.onchain_metadata);
   });
   return promise;
 }

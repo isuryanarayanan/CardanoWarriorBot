@@ -34,7 +34,9 @@ function getAssets(tag) {
     xhr.send(JSON.stringify(tag));
   });
   promise.then((data) => {
-    console.log(data.response);
+		response = JSON.parse(data.response)
+		console.log(response.onchain_metadata)
+
   });
   return promise;
 }

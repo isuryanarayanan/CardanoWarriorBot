@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { project_id } = require("../config.json");
+const { MessageEmbed } = require("discord.js");
 
 var XMLHttpRequest = require("xhr2");
 
@@ -36,7 +37,7 @@ function getAssets(tag) {
     xhr.send(JSON.stringify(tag));
   });
   promise.then((data) => {
-    console.log(data.response);
+    console.log(JSON.parse(data.response));
   });
   return promise;
 }
@@ -57,7 +58,47 @@ module.exports = {
       });
     } else {
       await getAssets(tag).then((data) => {
-        interaction.reply(JSON.stringify(data.response));
+        const response = JSON.parse(data.response);
+        var items = [];
+        var traits = [];
+
+        const warrior_embed = new MessageEmbed()
+          .setColor("#0099ff")
+          .setTitle(response.onchain_metadata.type + " - " + response.onchain_metadata.rarity)
+          .setURL("https://cardanowarriors.io")
+          .setDescription(response.onchain_metadata.name)
+          .setImage(
+            "https://ipfs.blockfrost.dev/ipfs/" +
+              response.onchain_metadata.image.slice(5)
+          )
+          .setTimestamp()
+          .setFooter(
+            "used by " + interaction.user.username,
+            interaction.user.displayAvatarURL({ dynamic: true })
+          );
+        warrior_embed.addField(
+          "Items",
+          response.onchain_metadata.items.length.toString(),
+          false
+        );
+        response.onchain_metadata.items.forEach((e) => {
+          items.push({ name: e.name, value: e.rarity, inline: true });
+        });
+        items.forEach((e) => {
+          warrior_embed.addFields(e);
+        });
+				warrior_embed.addField(
+				"\u200B",
+				"\u200B",
+				false
+				);
+        response.onchain_metadata.traits.forEach((e) => {
+          traits.push({ name: "Trait", value: e, inline: true });
+        });
+        traits.forEach((e) => {
+          warrior_embed.addFields(e);
+        });
+        interaction.reply({ embeds: [warrior_embed] });
       });
     }
   },

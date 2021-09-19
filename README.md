@@ -32,9 +32,10 @@ Examples
 ```
 
 ## Todos
-- Add CNFT listing link and price for search command if available
+- Fix bug with group search and cnft.io listings
 - Add floor finder
 - SVG ui
 
 ## Done
+- Add CNFT listing link and price for search command if available
 - Group search

@@ -99,15 +99,15 @@ module.exports = {
     .setDescription("Enter Cardano Warrior Id")
     .addStringOption((options) =>
       options
-        .setName("input")
-        .setDescription("1 - 9999,1-9999")
+        .setName("warrior_id")
+        .setDescription("1 - 9999 use commas to seperate multiple id's")
         .setRequired(true)
     ),
   async execute(interaction) {
     // On command execute this logic
 
     var reply = "";
-    const tag = interaction.options.getString("input");
+    const tag = interaction.options.getString("warrior_id");
 
     var tags = parseTagsFromString(tag);
     if (tags.length == 0) {
@@ -120,7 +120,7 @@ module.exports = {
     await tags.forEach(async (e) => {
       await getAssets(e).then(async (data) => {
         var listed_warrior = getCNFTListing(e, "all").then(async (data) => {
-          await interaction.channel.send(
+          await interaction.editReply(
             "Scanning CNFT.io for listing (wait)..."
           );
           var listings = JSON.parse(data.response);
@@ -144,8 +144,7 @@ module.exports = {
             });
           }
           if (warrior != "No active listing found.") {
-						console.log(interaction.channel.messages)
-            await interaction.channel.send(
+            await interaction.editReply(
               warrior.metadata["name"] +
                 " listed for " +
                 warrior.price / 1000000 +
@@ -154,7 +153,7 @@ module.exports = {
                 warrior.id
             );
           } else {
-            await interaction.channel.send("No active listing found.");
+            await interaction.editReply("No active listing found.");
           }
           return warrior;
         });
@@ -211,7 +210,7 @@ module.exports = {
           await embeds.forEach(async (e) => {
             await interaction.channel.send({ embeds: [e] });
           });
-          await interaction.reply("Querying for CardanoWarrior#"+e);
+          await interaction.reply("Querying for CardanoWarrior#"+tags);
         }
       });
     });

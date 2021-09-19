@@ -2,12 +2,14 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { project_id } = require("../config.json");
 const { MessageEmbed } = require("discord.js");
+var FormData = require("form-data");
 
 // Setup and helper functions
 var XMLHttpRequest = require("xhr2");
 
 var endpoints = {
   getAssets: "https://cardano-mainnet.blockfrost.io/api/v0/assets",
+  cnftListings: "https://api.cnft.io/market/listings/",
 };
 
 function hexIt(str) {
@@ -67,6 +69,30 @@ function parseTagsFromString(str) {
   return verifiedTags;
 }
 
+function getCNFTListing(id, page) {
+  let xhr = new XMLHttpRequest();
+  let promise = new Promise((resolve, reject) => {
+    xhr.open("POST", endpoints.cnftListings);
+    var params =
+      "search=Cardano+Warrior+#" +
+      id +
+      "&sort=price&order=asc&page=" +
+      page +
+      "&verified=true&project=Cardano+Warriors";
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    //xhr.setRequestHeader("project_id", project_id);
+    xhr.onload = () => {
+      resolve(xhr);
+    };
+    xhr.onerror = () => {
+      reject(xhr);
+    };
+
+    xhr.send(params);
+  });
+  return promise;
+}
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("search")
@@ -84,7 +110,6 @@ module.exports = {
     const tag = interaction.options.getString("input");
 
     var tags = parseTagsFromString(tag);
-    console.log(tags);
     if (tags.length == 0) {
       return interaction.reply({
         content: "Warrior Id should be valid",
@@ -94,9 +119,49 @@ module.exports = {
     var embeds = [];
     await tags.forEach(async (e) => {
       await getAssets(e).then(async (data) => {
-        // Reply to command with rendered data from the blockchain
+        var listed_warrior = getCNFTListing(e, "all").then(async (data) => {
+          await interaction.channel.send(
+            "Scanning CNFT.io for listing (wait)..."
+          );
+          var listings = JSON.parse(data.response);
+          var search_status = "";
+          var page = 1;
+          var warrior = "No active listing found.";
+          while (listings.assets.length != 0) {
+            search_status = page + "-" + listings.found;
+            page++;
+            listings.assets.forEach((listed) => {
+              if (listed.metadata.name == "Cardano Warrior #" + e) {
+                warrior = listed;
+              }
+            });
 
+            if (warrior != "No active listing found.") {
+              listings.assets = [];
+            }
+            listings = await getCNFTListing(e, page).then((data) => {
+              return JSON.parse(data.response);
+            });
+          }
+          if (warrior != "No active listing found.") {
+						console.log(interaction.channel.messages)
+            await interaction.channel.send(
+              warrior.metadata["name"] +
+                " listed for " +
+                warrior.price / 1000000 +
+                " here " +
+                "https://cnft.io/token.php?id=" +
+                warrior.id
+            );
+          } else {
+            await interaction.channel.send("No active listing found.");
+          }
+          return warrior;
+        });
+
+        // Reply to command with rendered data from the blockchain
         const response = JSON.parse(data.response);
+
         var items = [];
         var traits = [];
 
@@ -146,7 +211,7 @@ module.exports = {
           await embeds.forEach(async (e) => {
             await interaction.channel.send({ embeds: [e] });
           });
-          await interaction.reply("" + tags);
+          await interaction.reply("Querying for CardanoWarrior#"+e);
         }
       });
     });

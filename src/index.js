@@ -20,7 +20,7 @@ for (const file of commandFiles) {
 
 // Ready to go
 client.once("ready", () => {
-  client.user.setActivity("/search");
+  client.user.setActivity("/search warrior_id");
   console.log("Ready!");
 });
 

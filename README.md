@@ -32,10 +32,11 @@ Examples
 ```
 
 ## Todos
-- Fix bug with group search and cnft.io listings
-- Add floor finder
+- Add floor finder for rarities
 - SVG ui
 
 ## Done
+- Fix bug with group search and cnft.io listings
+- Add floor finder
 - Add CNFT listing link and price for search command if available
 - Group search

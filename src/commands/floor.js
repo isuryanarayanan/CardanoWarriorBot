@@ -1,7 +1,8 @@
 /* Imports */
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { project_id } = require("../config.json");
-const { MessageEmbed } = require("discord.js");
+const { MessageEmbed, MessageAttachment } = require("discord.js");
+const { CanvasRenderService } = require("chartjs-node-canvas");
 /* Imports */
 
 /* Setup */
@@ -10,6 +11,21 @@ var XMLHttpRequest = require("xhr2");
 var finish = false;
 var endpoints = {
   cnftListings: "https://api.cnft.io/market/listings/",
+};
+
+const chart_width = 1200;
+const chart_height = 600;
+/* Setup */
+
+const chartCallback = (ChartJS) => {
+  ChartJS.plugins.register({
+    beforeDraw: (chartInstance) => {
+      const { chart } = chartInstance;
+      const { ctx } = chart;
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, chart.width, chart.height);
+    },
+  });
 };
 
 /* CNFT.io scanner*/
@@ -43,21 +59,80 @@ function FindFloor() {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("floor")
-    .setDescription("Finds floor price for CardanoWarrior NFT's"),
+    .setDescription("Finds floor price for CardanoWarrior NFT's")
+    .addStringOption((option) =>
+      option
+        .setName("type")
+        .setDescription("Select how to view your floor")
+        .setRequired(true)
+        .addChoice("Chart", "floor_chart")
+        .addChoice("List", "floor_list")
+    ),
   async execute(interaction) {
-		var price = []
-		var listing = []
+    const input = interaction.options.getString("type");
+    const listing = [];
+    const price = [];
+    var reply = "```";
+
     await FindFloor().then(async (data) => {
       var response = JSON.parse(data.response);
-      await response.assets.forEach((e) => {
-				price.push(e.price)
-				listing.push(e.id)
-				// Make chart
-
-
+      await response.assets.splice(0, 10).forEach((e) => {
+        if (input == "floor_list") {
+          reply =
+            reply +
+            "\n" +
+            e.price / 1000000 +
+            " https://cnft.io/token.php?id=" +
+            e.id;
+        } else {
+          price.push(e.price / 1000000);
+          listing.push(e.metadata.tags[0].id);
+        }
       });
-      await interaction.reply(":)");
     });
+    if (input == "floor_chart") {
+      const canvas = new CanvasRenderService(
+        chart_width,
+        chart_height,
+        chartCallback
+      );
+      const configuration = {
+        type: "bar",
+        data: {
+          labels: listing,
+          datasets: [
+            {
+              label: "Floor Cardano Warriors",
+              data: price,
+              backgroundColor: "#7289d9",
+            },
+          ],
+        },
+        options: {
+          scales: {
+            xAxes: [
+              {
+                ticks: {
+                  fontSize: 20,
+                },
+              },
+            ],
+            yAxes: [
+              {
+                ticks: {
+                  fontSize: 20,
+                },
+              },
+            ],
+          },
+        },
+      };
+      const image = await canvas.renderToBuffer(configuration);
+      const attatchment = new MessageAttachment(image);
+      await interaction.reply({ files: [attatchment] }).then((msg) => {});
+    } else {
+      await interaction.reply(reply + "```");
+    }
   },
 };
 /* Main */

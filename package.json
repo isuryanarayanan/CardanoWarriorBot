@@ -28,6 +28,7 @@
     "chartjs-node-canvas": "^3.2.0",
     "discord-api-types": "^0.23.1",
     "discord.js": "^13.1.0",
+    "dotenv": "^10.0.0",
     "form-data": "^4.0.0",
     "nodemon": "^2.0.12",
     "xhr2": "^0.2.1"

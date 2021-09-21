@@ -1,6 +1,6 @@
 /* Imports */
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { project_id } = require("../config.json");
+const project_id = process.env["project_id"];
 const { MessageEmbed } = require("discord.js");
 /* Imports */
 

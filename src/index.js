@@ -1,5 +1,6 @@
 // Imports
-const { BOT_TOKEN } = require("./config.json");
+require("dotenv").config();
+const BOT_TOKEN = process.env["BOT_TOKEN"];
 const fs = require("fs");
 const { Client, Collection, Intents } = require("discord.js");
 

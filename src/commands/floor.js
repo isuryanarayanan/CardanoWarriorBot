@@ -1,6 +1,6 @@
 /* Imports */
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { project_id } = require("../config.json");
+const project_id = process.env["project_id"];
 const { MessageEmbed, MessageAttachment } = require("discord.js");
 const { CanvasRenderService } = require("chartjs-node-canvas");
 /* Imports */
@@ -15,8 +15,6 @@ var endpoints = {
 
 const chart_width = 1200;
 const chart_height = 600;
-/* Setup */
-
 const chartCallback = (ChartJS) => {
   ChartJS.plugins.register({
     beforeDraw: (chartInstance) => {
@@ -27,10 +25,11 @@ const chartCallback = (ChartJS) => {
     },
   });
 };
+/* Setup */
 
 /* CNFT.io scanner*/
 function FindFloor() {
-  // Detects a listing for a certain warrior id on a listing page
+  // Finds floor page
   let xhr = new XMLHttpRequest();
   let promise = new Promise((resolve, reject) => {
     xhr.open("POST", endpoints.cnftListings);
@@ -59,80 +58,57 @@ function FindFloor() {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("floor")
-    .setDescription("Finds floor price for CardanoWarrior NFT's")
-    .addStringOption((option) =>
-      option
-        .setName("type")
-        .setDescription("Select how to view your floor")
-        .setRequired(true)
-        .addChoice("Chart", "floor_chart")
-        .addChoice("List", "floor_list")
-    ),
+    .setDescription("Finds floor price for CardanoWarrior NFT's"),
   async execute(interaction) {
-    const input = interaction.options.getString("type");
     const listing = [];
     const price = [];
-    var reply = "```";
 
     await FindFloor().then(async (data) => {
       var response = JSON.parse(data.response);
       await response.assets.splice(0, 10).forEach((e) => {
-        if (input == "floor_list") {
-          reply =
-            reply +
-            "\n" +
-            e.price / 1000000 +
-            " https://cnft.io/token.php?id=" +
-            e.id;
-        } else {
-          price.push(e.price / 1000000);
-          listing.push(e.metadata.tags[0].id);
-        }
+        price.push(e.price / 1000000);
+        listing.push(e.metadata.tags[0].id);
       });
     });
-    if (input == "floor_chart") {
-      const canvas = new CanvasRenderService(
-        chart_width,
-        chart_height,
-        chartCallback
-      );
-      const configuration = {
-        type: "bar",
-        data: {
-          labels: listing,
-          datasets: [
+    const canvas = new CanvasRenderService(
+      chart_width,
+      chart_height,
+      chartCallback
+    );
+    const configuration = {
+      type: "bar",
+      data: {
+        labels: listing,
+        datasets: [
+          {
+            label: "Floor Cardano Warriors",
+            data: price,
+            backgroundColor: "#7289d9",
+          },
+        ],
+      },
+      options: {
+        scales: {
+          xAxes: [
             {
-              label: "Floor Cardano Warriors",
-              data: price,
-              backgroundColor: "#7289d9",
+              ticks: {
+                fontSize: 20,
+              },
+            },
+          ],
+          yAxes: [
+            {
+              ticks: {
+                fontSize: 20,
+              },
             },
           ],
         },
-        options: {
-          scales: {
-            xAxes: [
-              {
-                ticks: {
-                  fontSize: 20,
-                },
-              },
-            ],
-            yAxes: [
-              {
-                ticks: {
-                  fontSize: 20,
-                },
-              },
-            ],
-          },
-        },
-      };
-      const image = await canvas.renderToBuffer(configuration);
-      const attatchment = new MessageAttachment(image);
-      await interaction.reply({ files: [attatchment] }).then((msg) => {});
-    } else {
-      await interaction.reply(reply + "```");
-    }
+      },
+    };
+    const image = await canvas.renderToBuffer(configuration);
+    const attatchment = new MessageAttachment(image);
+    await interaction.reply({ files: [attatchment] });
   },
 };
 /* Main */

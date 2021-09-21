@@ -5,7 +5,6 @@ const { MessageEmbed } = require("discord.js");
 /* Imports */
 
 /* Setup */
-var FormData = require("form-data");
 var XMLHttpRequest = require("xhr2");
 var finish = false;
 var endpoints = {

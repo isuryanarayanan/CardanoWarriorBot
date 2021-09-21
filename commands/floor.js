@@ -6,7 +6,6 @@ const { CanvasRenderService } = require("chartjs-node-canvas");
 /* Imports */
 
 /* Setup */
-var FormData = require("form-data");
 var XMLHttpRequest = require("xhr2");
 var finish = false;
 var endpoints = {

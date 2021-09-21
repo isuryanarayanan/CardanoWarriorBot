@@ -1,8 +1,11 @@
 // Imports
+require("dotenv").config({ path: "../.env" });
 const fs = require("fs");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
-const { CLIENT_ID, GUILD_ID, BOT_TOKEN } = require("./config.json");
+const CLIENT_ID = process.env["CLIENT_ID"];
+const GUILD_ID = process.env["GUILD_ID"];
+const BOT_TOKEN = process.env["BOT_TOKEN"];
 
 // Setup
 const commands = [];

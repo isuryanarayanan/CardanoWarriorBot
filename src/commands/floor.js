@@ -9,7 +9,6 @@ var FormData = require("form-data");
 var XMLHttpRequest = require("xhr2");
 var finish = false;
 var endpoints = {
-  getAssets: "https://cardano-mainnet.blockfrost.io/api/v0/assets",
   cnftListings: "https://api.cnft.io/market/listings/",
 };
 
@@ -45,32 +44,19 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("floor")
     .setDescription("Finds floor price for CardanoWarrior NFT's"),
-  //.addStringOption((options) =>
-  //options
-  //.setName("type")
-  //.setDescription("Select a warrior type to find floor")
-  //.setRequired(true)
-  //.addChoice("Common warrior", "type_common")
-  //.addChoice("Uncommon warrior", "type_uncommon")
-  //.addChoice("Rare warrior", "type_rare")
-  //.addChoice("Epic warrior", "type_epic")
-  //.addChoice("Legendary warrior", "type_legendary")
-  //.addChoice("Mythical warrior", "type_mythical")
-  //),
   async execute(interaction) {
-    const input = interaction.options.getString("type");
+		var price = []
+		var listing = []
     await FindFloor().then(async (data) => {
       var response = JSON.parse(data.response);
-      var reply = "```";
       await response.assets.forEach((e) => {
-        reply =
-          reply +
-          "\n" +
-          e.price / 1000000 +
-          " https://cnft.io/token.php?id=" +
-          e.id;
+				price.push(e.price)
+				listing.push(e.id)
+				// Make chart
+
+
       });
-      await interaction.reply(reply+"```");
+      await interaction.reply(":)");
     });
   },
 };

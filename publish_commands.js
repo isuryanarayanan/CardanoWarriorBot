@@ -1,5 +1,5 @@
 // Imports
-require("dotenv").config({ path: "../.env" });
+require("dotenv").config();
 const fs = require("fs");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");

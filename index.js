@@ -1,5 +1,5 @@
 // Imports
-require("dotenv").config({path:'../.env'});
+require("dotenv").config();
 const BOT_TOKEN = process.env["BOT_TOKEN"];
 const fs = require("fs");
 const { Client, Collection, Intents } = require("discord.js");

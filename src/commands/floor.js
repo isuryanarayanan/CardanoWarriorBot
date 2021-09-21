@@ -61,7 +61,7 @@ module.exports = {
     const input = interaction.options.getString("type");
     await FindFloor().then(async (data) => {
       var response = JSON.parse(data.response);
-      var reply = "";
+      var reply = "```";
       await response.assets.forEach((e) => {
         reply =
           reply +
@@ -70,7 +70,7 @@ module.exports = {
           " https://cnft.io/token.php?id=" +
           e.id;
       });
-      await interaction.reply(reply);
+      await interaction.reply(reply+"```");
     });
   },
 };

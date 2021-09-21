@@ -4,7 +4,8 @@
   "description": "A community enabled bot for exploring NFT's by the CardanoWarrior game on the Cardano blockchain.",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cd src/ && node index.js"
   },
   "repository": {
     "type": "git",
@@ -32,5 +33,9 @@
     "form-data": "^4.0.0",
     "nodemon": "^2.0.12",
     "xhr2": "^0.2.1"
+  },
+  "engines": {
+    "node": ">=16.9.1",
+    "npm": ">=7.21.1"
   }
 }

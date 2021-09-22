@@ -12,7 +12,7 @@ var endpoints = {
   cnftListings: "https://api.cnft.io/market/listings/",
 };
 
-const chart_width = 1200;
+const chart_width = 1000;
 const chart_height = 500;
 const chartCallback = (ChartJS) => {
   ChartJS.plugins.register({
@@ -64,9 +64,9 @@ module.exports = {
 
     await FindFloor().then(async (data) => {
       var response = JSON.parse(data.response);
-      await response.assets.splice(0, 15).forEach((e) => {
+      await response.assets.splice(0, 12).forEach((e) => {
         price.push(e.price / 1000000);
-        listing.push(e.metadata.tags[0].id);
+        listing.push(e.metadata.tags[1].type + "\n#" + e.metadata.tags[0].id);
       });
     });
     const canvas = new CanvasRenderService(
@@ -80,33 +80,35 @@ module.exports = {
         labels: listing,
         datasets: [
           {
-						barPercentage: 0.5,
-						barThickness: 6,
-						maxBarThickness: 8,
-						minBarLength: 2,
             label: "Floor Cardano Warriors",
             data: price,
             backgroundColor: "#7289d9",
           },
         ],
       },
+
       options: {
+        layout: {
+          padding: {
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 30,
+          },
+        },
         scales: {
           xAxes: [
             {
-							gridLines: { color: "#FFFFFF", zeroLineColor: "#FFFFFF" },
-              scaleLabel: {
-								display:true,
-                labelString: "CardanoWarrior id's",
-              },
+              gridLines: { color: "#666666", zeroLineColor: "#666666" },
               ticks: {
-                fontSize: 20,
+                display: "top",
+                fontSize: 15,
               },
             },
           ],
           yAxes: [
             {
-              gridLines: { color: "#FFFFFF", zeroLineColor: "#FFFFFF" },
+              gridLines: { color: "#666666", zeroLineColor: "#666666" },
               scaleLabel: {
                 display: true,
                 labelString: "Price in ADA",

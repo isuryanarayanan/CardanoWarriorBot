@@ -33,7 +33,6 @@ Examples
 
 ## Todos
 - Add floor finder for rarities
-- Add see listing button to floor chart
 
 ## Done
 - Floor chart added

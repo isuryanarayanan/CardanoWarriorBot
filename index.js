@@ -27,6 +27,7 @@ client.once("ready", () => {
 
 // Interaction endpoint
 client.on("interactionCreate", async (interaction) => {
+	
   if (!interaction.isCommand()) return;
 
   // Get command details from collection

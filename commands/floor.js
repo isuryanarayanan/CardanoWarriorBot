@@ -13,13 +13,13 @@ var endpoints = {
 };
 
 const chart_width = 1200;
-const chart_height = 600;
+const chart_height = 500;
 const chartCallback = (ChartJS) => {
   ChartJS.plugins.register({
     beforeDraw: (chartInstance) => {
       const { chart } = chartInstance;
       const { ctx } = chart;
-      ctx.fillStyle = "white";
+      ctx.fillStyle = "black";
       ctx.fillRect(0, 0, chart.width, chart.height);
     },
   });
@@ -64,7 +64,7 @@ module.exports = {
 
     await FindFloor().then(async (data) => {
       var response = JSON.parse(data.response);
-      await response.assets.splice(0, 10).forEach((e) => {
+      await response.assets.splice(0, 15).forEach((e) => {
         price.push(e.price / 1000000);
         listing.push(e.metadata.tags[0].id);
       });
@@ -80,6 +80,10 @@ module.exports = {
         labels: listing,
         datasets: [
           {
+						barPercentage: 0.5,
+						barThickness: 6,
+						maxBarThickness: 8,
+						minBarLength: 2,
             label: "Floor Cardano Warriors",
             data: price,
             backgroundColor: "#7289d9",
@@ -90,6 +94,11 @@ module.exports = {
         scales: {
           xAxes: [
             {
+							gridLines: { color: "#FFFFFF", zeroLineColor: "#FFFFFF" },
+              scaleLabel: {
+								display:true,
+                labelString: "CardanoWarrior id's",
+              },
               ticks: {
                 fontSize: 20,
               },
@@ -97,6 +106,11 @@ module.exports = {
           ],
           yAxes: [
             {
+              gridLines: { color: "#FFFFFF", zeroLineColor: "#FFFFFF" },
+              scaleLabel: {
+                display: true,
+                labelString: "Price in ADA",
+              },
               ticks: {
                 fontSize: 20,
               },
@@ -107,7 +121,9 @@ module.exports = {
     };
     const image = await canvas.renderToBuffer(configuration);
     const attatchment = new MessageAttachment(image);
-    await interaction.reply({ files: [attatchment] });
+
+    await interaction.reply("The floor is " + price[0]);
+    await interaction.editReply({ files: [attatchment] });
   },
 };
 /* Main */

@@ -11,9 +11,24 @@ var endpoints = {
   getAssets: "https://cardano-mainnet.blockfrost.io/api/v0/assets",
   cnftListings: "https://api.cnft.io/market/listings/",
 };
+var users = {};
+var timeout = 0;
+var timelimit = 30000;
 /* Setup */
 
 /* Helper functions */
+function userLimitTest(userId) {
+  if (users[userId]) {
+    if (-1 * (users[userId].lastUsed - Date.now()) < timelimit) {
+      timeout = -1 * (users[userId].lastUsed - Date.now());
+      return false;
+    }
+  } else {
+    users[userId] = { id: userId, lastUsed: Date.now() };
+  }
+  return true;
+}
+
 function hexIt(str) {
   // Returns hex encoded value of string
   str = "CardanoWarrior" + str;
@@ -46,8 +61,9 @@ function parseTagsFromString(str) {
     }
   });
 
-  return verifiedTags;
+  return verifiedTags.splice(0, 3);
 }
+
 /* Helper functions */
 
 /* CNFT.io scanner */
@@ -219,17 +235,25 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
-    const input = interaction.options.getString("warrior_id");
+    if (userLimitTest(interaction.user.id)) {
+      users[interaction.user.id].lastUsed = Date.now();
+      const input = interaction.options.getString("warrior_id");
 
-    var tags = parseTagsFromString(input);
+      var tags = parseTagsFromString(input);
 
-    if (tags.length == 0) {
-      await interaction.reply("what?");
+      if (tags.length == 0) {
+        await interaction.reply("what?");
+      } else {
+        await interaction.reply("Querying for CardanoWarrior#" + tags);
+        tags.forEach(async (tag) => {
+          await getAssets(tag, tags, interaction);
+        });
+      }
     } else {
-      await interaction.reply("Querying for CardanoWarrior#" + tags);
-      tags.forEach(async (tag) => {
-        await getAssets(tag, tags, interaction);
-      });
+      await interaction.reply(
+        "Ayo chill !! ||wait for " + (timelimit - timeout) / 1000 + " seconds||",
+        (hidden = true)
+      );
     }
   },
 };

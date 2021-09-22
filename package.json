@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/isuryanarayanan/CardanoWarriorBot#readme",
   "dependencies": {
+    "@discordjs/rest": "^0.1.0-canary.0",
     "chartjs-node-canvas": "^3.2.0",
     "discord.js": "^13.1.0",
     "dotenv": "^10.0.0",

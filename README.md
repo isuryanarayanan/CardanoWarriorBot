@@ -34,10 +34,12 @@ Examples
 ## Todos
 - Add floor finder for rarities
 - Add see listing button to floor chart
-- SVG ui
 
 ## Done
 - Floor chart added
+- Clean up floor chart with readable information
+- Add batch search limit of 3
+- Add per user command limits
 - Fix bug with group search and cnft.io listings
 - Add floor finder
 - Add CNFT listing link and price for search command if available

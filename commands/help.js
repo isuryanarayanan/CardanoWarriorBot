@@ -9,7 +9,7 @@ module.exports = {
     .setDescription("How to use the bot"),
   async execute(interaction) {
     var reply =
-      "To search use `/search warrior_id`\nTo get floor price use `/floor list or chart`";
+      "To search use `/search warrior_id`\nTo get floor price use `/floor `";
     await interaction.reply(reply);
   },
 };

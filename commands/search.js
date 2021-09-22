@@ -41,7 +41,7 @@ function parseTagsFromString(str) {
     }
   });
   verifiedTags.forEach((e) => {
-    if (e < 1 || e > 9999) {
+    if (e < 1 || e > 10000) {
       verifiedTags = arrayRemove(verifiedTags, e);
     }
   });

@@ -21,7 +21,7 @@ for (const file of commandFiles) {
 
 // Ready to go
 client.once("ready", () => {
-  client.user.setActivity("/search warrior_id");
+  client.user.setActivity("/help");
   console.log("Ready!");
 });
 

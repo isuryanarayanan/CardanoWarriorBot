@@ -138,7 +138,7 @@ function getAssets(tag, tags, interaction) {
           response.onchain_metadata.rarity
       )
       .setURL("https://cardanowarriors.io")
-      .setImage(
+      .setThumbnail(
         "https://ipfs.blockfrost.dev/ipfs/" +
           response.onchain_metadata.image.slice(5)
       )
@@ -164,7 +164,7 @@ function getAssets(tag, tags, interaction) {
 
     // Traits of the warrior
     var traits = [];
-    warrior_embed.addField("\u200B", "\u200B", false);
+    //warrior_embed.addField("\u200B", "\u200B", false);
     response.onchain_metadata.traits.forEach((e) => {
       traits.push({ name: "Trait", value: e, inline: true });
     });

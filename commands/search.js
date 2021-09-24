@@ -150,27 +150,74 @@ function getAssets(tag, tags, interaction) {
 
     // Items of the warrior
     var items = [];
+    var common_items = "";
+    var uncommon_items = "";
+    var rare_items = "";
+    var epic_items = "";
+    var legendary_items = "";
+    var mythical_items = "";
     warrior_embed.addField(
       "Items",
       response.onchain_metadata.items.length.toString(),
       false
     );
-    response.onchain_metadata.items.forEach((e) => {
+    await response.onchain_metadata.items.forEach((e) => {
+      console.log(e.rarity);
+      if (e.rarity == "Common") {
+        common_items = common_items + "\n" + e.name;
+      }
+      if (mythical_items != "") {
+        uncommon_items = uncommon_items + "\n" + e.name;
+      }
+      if (e.rarity == "Rare") {
+        rare_items = rare_items + "\n" + e.name;
+      }
+      if (e.rarity == "Epic") {
+        epic_items = epic_items + "\n" + e.name;
+      }
+      if (e.rarity == "Legendary") {
+        legendary_items = legendary_items + "\n" + e.name;
+      }
+      if (e.rarity == "Mythical") {
+        mythical_items = mythical_items + "\n" + e.name;
+      }
       items.push({ name: e.name, value: e.rarity, inline: true });
     });
-    items.forEach((e) => {
-      warrior_embed.addFields(e);
-    });
-
+    if (common_items != "") {
+      warrior_embed.addField("Common", common_items, (inline = true));
+    }
+    if (uncommon_items != "") {
+      warrior_embed.addField("Uncommon", uncommon_items, (inline = true));
+    }
+    if (rare_items != "") {
+      warrior_embed.addField("Rare", rare_items, (inline = true));
+    }
+    if (epic_items != "") {
+      warrior_embed.addField("Epic", epic_items, (inline = true));
+    }
+    if (legendary_items != "") {
+      warrior_embed.addField("Legendary", legendary_items, (inline = true));
+    }
+    if (mythical_items != "") {
+      warrior_embed.addField("Mythical", mythical_items, (inline = true));
+    }
     // Traits of the warrior
     var traits = [];
+    var traits_reply = "";
     //warrior_embed.addField("\u200B", "\u200B", false);
     response.onchain_metadata.traits.forEach((e) => {
-      traits.push({ name: "Trait", value: e, inline: true });
+      traits.push(e);
     });
+    var trait_count = 0;
     traits.forEach((e) => {
-      warrior_embed.addFields(e);
+      trait_count++;
+      if (trait_count == traits.length) {
+        traits_reply = traits_reply + ("" + e + ". ");
+      } else {
+        traits_reply = traits_reply + ("" + e + ", ");
+      }
     });
+    warrior_embed.addField("Traits", traits_reply);
 
     // Sending the embed
     await interaction.channel
@@ -251,7 +298,9 @@ module.exports = {
       }
     } else {
       await interaction.reply(
-        "Ayo chill !! ||wait for " + (timelimit - timeout) / 1000 + " seconds||",
+        "Ayo chill !! ||wait for " +
+          (timelimit - timeout) / 1000 +
+          " seconds||",
         (hidden = true)
       );
     }

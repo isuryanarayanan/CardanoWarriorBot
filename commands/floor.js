@@ -27,7 +27,7 @@ const chartCallback = (ChartJS) => {
 /* Setup */
 
 /* CNFT.io scanner*/
-function FindFloor() {
+function FindFloor(page, order) {
   // Finds floor page
   let xhr = new XMLHttpRequest();
   let promise = new Promise((resolve, reject) => {
@@ -35,8 +35,10 @@ function FindFloor() {
     var params =
       "search=" +
       "&sort=price" +
-      "&order=asc" +
-      "&page=1" +
+      "&order=" +
+      order +
+      "&page=" +
+      page +
       "&verified=true" +
       "&project=Cardano+Warriors";
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -57,18 +59,61 @@ function FindFloor() {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("floor")
-    .setDescription("Finds floor price for CardanoWarrior NFT's"),
+    .setDescription("Finds floor price for CardanoWarrior NFT's")
+    .addStringOption((options) =>
+      options
+        .setName("class")
+        .setDescription("Returns floor chart of the class selected")
+        .setRequired(true)
+        .addChoice("Common (instant)", "Common")
+        .addChoice("Uncommon (a little slow)", "Uncommon")
+        .addChoice("Rare (slow)", "Rare")
+        .addChoice("Epic (slower)", "Epic")
+        .addChoice("Legendary (very slow)", "Legendary")
+        .addChoice("Mythical (go take a nap)", "Mythical")
+    ),
   async execute(interaction) {
+    const warrior_class = interaction.options.getString("class");
     const listing = [];
     const price = [];
 
-    await FindFloor().then(async (data) => {
-      var response = JSON.parse(data.response);
-      await response.assets.splice(0, 12).forEach((e) => {
-        price.push(e.price / 1000000);
-        listing.push(e.metadata.tags[1].type + "\n#" + e.metadata.tags[0].id);
+    await interaction.reply("The floor for " + warrior_class + " is ..");
+
+    var page = 1;
+    var page_limit = 0;
+    var page_limit_hit = false;
+    var order = "asc";
+    var class_assets = [];
+
+    while (class_assets.length < 12 && !page_limit_hit) {
+      await FindFloor(page, order).then(async (data) => {
+        var response = JSON.parse(data.response);
+        page_limit = -1 * Math.floor((-1 * response.found) / 25);
+
+        if (page == page_limit) {
+          page_limit_hit = true;
+          return;
+        }
+        await response.assets.forEach((e) => {
+          if (
+            e.metadata.tags[3].rarity == warrior_class &&
+            class_assets.length < 12
+          ) {
+            class_assets.push(e);
+          }
+        });
       });
+
+      page++;
+    }
+
+    class_assets.forEach((asset) => {
+      price.push(asset.price / 1000000);
+      listing.push(
+        asset.metadata.tags[1].type + "\n#" + asset.metadata.tags[0].id
+      );
     });
+
     const canvas = new CanvasRenderService(
       chart_width,
       chart_height,
@@ -124,7 +169,9 @@ module.exports = {
     const image = await canvas.renderToBuffer(configuration);
     const attatchment = new MessageAttachment(image);
 
-    await interaction.reply("The floor is " + price[0]);
+    await interaction.editReply(
+      "The floor for " + warrior_class + " is " + price[0]
+    );
     await interaction.editReply({ files: [attatchment] });
   },
 };

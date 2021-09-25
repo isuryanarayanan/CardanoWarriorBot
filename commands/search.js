@@ -161,8 +161,7 @@ function getAssets(tag, tags, interaction) {
       response.onchain_metadata.items.length.toString(),
       false
     );
-    await response.onchain_metadata.items.forEach((e) => {
-      console.log(e.rarity);
+    response.onchain_metadata.items.forEach((e) => {
       if (e.rarity == "Common") {
         common_items = common_items + "\n" + e.name;
       }

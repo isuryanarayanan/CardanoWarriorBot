@@ -2,6 +2,10 @@
 
 A community enabled bot for exploring NFT's by the CardanoWarrior game on the Cardano blockchain.
 
+## Donate
+This bot is free, but if you like what you see here's my cardano wallet address (ADA)
+`addr1q9hkd92zj5jfpnu3y6h05u0cqrec4rjmff83evcl9egn2fesfda49hjutl24g5f9ulvutmqf5mlzm8mzntlxyrqkudds6z6fc7`
+
 ## Features
 ### Search command
 
@@ -32,9 +36,9 @@ Examples
 ```
 
 ## Todos
-- Add floor finder for rarities
 
 ## Done
+- Add floor finder for rarities
 - Floor chart added
 - Clean up floor chart with readable information
 - Add batch search limit of 3

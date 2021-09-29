@@ -13,7 +13,7 @@ module.exports = {
     help_embed
       .setColor("#0099ff")
       .setDescription(
-        "This bot is purely free to use, the source for this project is available at https://github.com/isuryanarayanan/CardanoWarriorBot feel free to contribute <3"
+        "This bot is purely free to use, the source for this project is available at https://github.com/isuryanarayanan/CardanoWarriorBot feel free to contribute <3.\n If you want to support the developer donate ADA here `addr1q9hkd92zj5jfpnu3y6h05u0cqrec4rjmff83evcl9egn2fesfda49hjutl24g5f9ulvutmqf5mlzm8mzntlxyrqkudds6z6fc7`"
       )
       .setTitle("Commands")
       .setURL("https://cardanowarriorbot.herokuapp.com/")

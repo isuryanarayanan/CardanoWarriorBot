@@ -11,21 +11,23 @@ module.exports = {
   async execute(interaction) {
     const help_embed = new MessageEmbed();
     help_embed
-      .setColor("#0099ff")
-      .setDescription(
-        "This bot is purely free to use, the source for this project is available at https://github.com/isuryanarayanan/CardanoWarriorBot feel free to contribute <3.\n If you want to support the developer donate ADA here `addr1q9hkd92zj5jfpnu3y6h05u0cqrec4rjmff83evcl9egn2fesfda49hjutl24g5f9ulvutmqf5mlzm8mzntlxyrqkudds6z6fc7`"
-      )
+      .setColor("#000000")
+      .setDescription("https://github.com/isuryanarayanan/CardanoWarriorBot")
       .setTitle("Commands")
       .setURL("https://cardanowarriorbot.herokuapp.com/")
       .setFooter("bot by !suryan");
 
     help_embed.addField(
       "Exploring warrior's",
-      "Using the `/search` command to find cardano warriors. This command takes 2 types of inputs, \n1) `/search #id` returns an embed with the details of the warrior \n2) `/search #id,#id,#id` returns 3 warriors "
+      "1) `/search #id` returns an embed with the details of the warrior \n2) `/search #id,#id,#id` returns 3 warriors "
     );
     help_embed.addField(
       "Floor price",
-      "using the `/floor` will return a floor chart"
+      "1) `/floor class:#classname` will return a floor chart of the corresponding class \n2) `/floor rarity:#rarityoption` will return floor chart of the corresponding rarity"
+    );
+    help_embed.addField(
+      "Donate",
+      "addr1qy4hyssptf7k8jgfpgndu0uulqaz94v7krvgagjxyra3k5fsfda49hjutl24g5f9ulvutmqf5mlzm8mzntlxyrqkuddstmyuu3"
     );
     await interaction.reply(
       interaction.user.username + " use / commands to access the bot"

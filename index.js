@@ -25,6 +25,7 @@ client.once("ready", () => {
   console.log("Ready!");
 });
 
+//slight edit
 // Interaction endpoint
 client.on("interactionCreate", async (interaction) => {
 	

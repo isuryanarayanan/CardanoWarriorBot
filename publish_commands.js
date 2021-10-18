@@ -8,6 +8,12 @@ const CLIENT_ID = process.env["CLIENT_ID"];
 const GUILD_ID = process.env["GUILD_ID"];
 const BOT_TOKEN = process.env["BOT_TOKEN"];
 
+// DEV MAIN BOT
+//const CLIENT_ID = process.env["CLIENT_ID3"];
+//const GUILD_ID = process.env["GUILD_ID3"];
+//const BOT_TOKEN = process.env["BOT_TOKEN3"];
+
+
 // MAIN
 //const CLIENT_ID = process.env["CLIENT_ID2"];
 //const GUILD_ID = process.env["GUILD_ID2"];

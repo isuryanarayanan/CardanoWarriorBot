@@ -23,7 +23,7 @@ module.exports = {
     );
     help_embed.addField(
       "Floor price",
-      "1) `/floor class:#classname` will return a floor chart of the corresponding class \n2) `/floor rarity:#rarityoption` will return floor chart of the corresponding rarity"
+      "To find the floor quick use `/floor` command and use the options as filters\n While using item_query you can use commas to seperate multiple items"
     );
     help_embed.addField(
       "Donate",

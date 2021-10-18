@@ -21,42 +21,30 @@ Example
 
 ![enter image description here](https://cdn.discordapp.com/attachments/834476465314856960/888714417066377246/unknown.png)
 
-### Floor command (todo)
+### Floor command 
 
-`/floor class:classname` allows users to find the floor price of CardanoWarrior NFT's with a class filter.
+`/floor` is a command used to quickly view the current floor price from cnft.io marketplace
+This command allows filters to the floor so that you can see floors for warriors with different characteristics.
 
-Examples
+![enter image description here](https://media.discordapp.net/attachments/889682253288964160/899682469136171048/unknown.png)
 
-```
-/floor class:balrog
-```
+While using the `items_query`, you can use `,` to sepereate different items.
 
-`/floor rarity:option` allows users to find the floor price of CardanoWarrior NFT's with a rarity filter.
+![enter image description here](https://media.discordapp.net/attachments/889682253288964160/899683572124897360/unknown.png)
 
-Examples
+You can use multiple filters
 
-```
-/floor
-> common
-> uncommon
-> rare
-> epic
-> legendary
-> mythical
-```
+![enter image description here](https://media.discordapp.net/attachments/889682253288964160/899685424258224228/unknown.png)
 
-```
-/floor common
-```
-
+![enter image description here](https://media.discordapp.net/attachments/889682253288964160/899686858534043678/unknown.png)
 ## Todos
-
-- fix bug with floor finder using classes where no listing for a specific class is found it will not show proper message
-- clean up code
+-- empty --
 
 ## Done
 
 - Add floor finder for rarities
+- clean up code
+- fix bug with floor finder using classes where no listing for a specific class is found it will not show proper message
 - Floor chart added
 - Clean up floor chart with readable information
 - Add batch search limit of 3

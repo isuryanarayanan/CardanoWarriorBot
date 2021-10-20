@@ -269,7 +269,16 @@ module.exports = {
     let warrior_options = interaction.options._hoistedOptions;
     let rarity_select = null;
     let class_select = null;
+		let number_select = null;
     let item_query_select = null;
+
+		try {
+      number_select = warrior_options
+        .filter((e) => e.name === "items_number")[0]
+        .value.toLowerCase();
+      filters = filters + number_select + " items / ";
+    } catch (err) {}
+
 
     try {
       rarity_select = warrior_options

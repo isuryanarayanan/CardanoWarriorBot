@@ -4,9 +4,9 @@ const fs = require("fs");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 // DEV
-const CLIENT_ID = process.env["CLIENT_ID"];
-const GUILD_ID = process.env["GUILD_ID"];
-const BOT_TOKEN = process.env["BOT_TOKEN"];
+//const CLIENT_ID = process.env["CLIENT_ID"];
+//const GUILD_ID = process.env["GUILD_ID"];
+//const BOT_TOKEN = process.env["BOT_TOKEN"];
 
 // DEV MAIN BOT
 //const CLIENT_ID = process.env["CLIENT_ID3"];
@@ -15,9 +15,9 @@ const BOT_TOKEN = process.env["BOT_TOKEN"];
 
 
 // MAIN
-//const CLIENT_ID = process.env["CLIENT_ID2"];
-//const GUILD_ID = process.env["GUILD_ID2"];
-//const BOT_TOKEN = process.env["BOT_TOKEN2"];
+const CLIENT_ID = process.env["CLIENT_ID2"];
+const GUILD_ID = process.env["GUILD_ID2"];
+const BOT_TOKEN = process.env["BOT_TOKEN2"];
 
 
 // Setup

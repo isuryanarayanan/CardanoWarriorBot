@@ -1,221 +1,14 @@
 /* Imports */
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { MessageEmbed, MessageAttachment } = require("discord.js");
-const { CanvasRenderService } = require("chartjs-node-canvas");
-const rarities_json = require("./rarities.json");
-const project_id = process.env["project_id"];
-/* Imports */
+const { findFloor } = require("../services/cnft.js");
+const { arrayRemove } = require("../services/misc.js");
+const { chartBuilder } = require("../services/chart.js");
+const rarities_json = require("../rarities.json");
 
-/* Setup and essential variables */
-const XMLHttpRequest = require("xhr2");
 const warrior_classes = rarities_json.warrior_classes;
 const item_classes = rarities_json.item_classes;
 const warrior_rarities = rarities_json.warrior_rarity;
-
-const endpoints = {
-  cnftListings: "https://api.cnft.io/market/listings/",
-};
-const config = {
-  floor_cap: 9,
-  floor_chart_height: 500,
-  floor_chart_width: 1000,
-};
-
-const chartCallback = (ChartJS) => {
-  ChartJS.plugins.register({
-    beforeDraw: (chartInstance) => {
-      const { chart } = chartInstance;
-      const { ctx } = chart;
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, chart.width, chart.height);
-    },
-  });
-};
-/* Setup and essential variables */
-
-function arrayRemove(arr, value) {
-  // Removes value from array arr
-	
-  return arr.filter(function (ele) {
-    return ele != value;
-  });
-}
-
-function crawlCNFT(page) {
-	// Crawls CNFT.io marketplace
-	// takes in a page number and returns a promise containing 
-	// cnft.io market listings for cardanowarriors on that page
-	
-  let xhr = new XMLHttpRequest();
-  let promise = new Promise((resolve, reject) => {
-    xhr.open("POST", endpoints.cnftListings);
-    var params =
-      "search=" +
-      "&sort=price" +
-      "&order=asc" +
-      "&page=" +
-      page +
-      "&verified=true" +
-      "&project=Cardano+Warriors";
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.onload = () => {
-      resolve(xhr);
-    };
-    xhr.onerror = () => {
-      reject(xhr);
-    };
-
-    xhr.send(params);
-  });
-  return promise;
-}
-
-async function chartBuilder(warriors) {
-	// Builds a bar chart with an array of 
-	// market listings from cnft.io 
-	
-  let chart_price = [];
-  let chart_listing = [];
-
-  warriors.forEach((asset) => {
-		// parses price data and listing data
-    chart_price.push(asset.price / 1000000);
-    chart_listing.push(
-      asset.metadata.tags[1].type + "\n#" + asset.metadata.tags[0].id
-    );
-  });
-
-  const canvas = new CanvasRenderService(
-    config.floor_chart_width,
-    config.floor_chart_height,
-    chartCallback
-  );
-  const configuration = {
-    type: "bar",
-    data: {
-      labels: chart_listing,
-      datasets: [
-        {
-          label: "Floor Cardano Warriors",
-          data: chart_price,
-          backgroundColor: "#7289d9",
-        },
-      ],
-    },
-
-    options: {
-      layout: {
-        padding: {
-          left: 0,
-          right: 0,
-          top: 0,
-          bottom: 30,
-        },
-      },
-      scales: {
-        xAxes: [
-          {
-            gridLines: { color: "#666666", zeroLineColor: "#666666" },
-            ticks: {
-              display: "top",
-              fontSize: 15,
-            },
-          },
-        ],
-        yAxes: [
-          {
-            gridLines: { color: "#666666", zeroLineColor: "#666666" },
-            scaleLabel: {
-              display: true,
-              labelString: "Price in ADA",
-            },
-            ticks: {
-              fontSize: 20,
-            },
-          },
-        ],
-      },
-    },
-  };
-  const image = await canvas.renderToBuffer(configuration);
-  const attatchment = new MessageAttachment(image);
-
-  return { floor_price: chart_price[0], attatchment: attatchment };
-}
-
-function constraintCheck(metadata, constraints) {
-	// Checks if the query constraints 
-	// will pass for a warrior metadata
-	
-  let test_items_number = true;
-  let test_items_query = true;
-  let test_warrior_class = true;
-  let test_warrior_rarity = true;
-
-  constraints.forEach((test) => {
-    if (test.name == "warrior_rarity") {
-      test_warrior_rarity = metadata.tags[3].rarity == test.value;
-    }
-    if (test.name == "warrior_class") {
-      test_warrior_class = metadata.tags[1].type.toLowerCase() == test.value;
-    }
-    if (test.name == "items_number") {
-      test_items_number = metadata.tags[2].items.length == test.value;
-    }
-    if (test.name == "items_query") {
-      test.value.forEach((query) => {
-        if (
-          !metadata.tags[2].items.filter((e) => e.name.toLowerCase() === query)
-            .length > 0
-        ) {
-          test_items_query = false;
-        }
-      });
-    }
-  });
-
-  // All tests should pass for to be in floor
-  return (
-    test_items_query &&
-    test_items_number &&
-    test_warrior_class &&
-    test_warrior_rarity
-  );
-}
-
-async function findFloor(op = undefined) {
-	// Finds floor for the options passed
-	
-  let floor_warriors = [];
-  let cnft_page = 1;
-  let cnft_page_limit = 0;
-  let cnft_page_limit_hit = false;
-
-  // loop until the floor list fills up or the page limit is hit
-  while (floor_warriors.length <= config.floor_cap && !cnft_page_limit_hit) {
-    await crawlCNFT(cnft_page).then(async (data) => {
-      var response = JSON.parse(data.response);
-      cnft_page_limit = -1 * Math.floor((-1 * response.found) / 25);
-
-      if (cnft_page == cnft_page_limit + 1) {
-        cnft_page_limit_hit = true;
-        return;
-      }
-
-      await response.assets.forEach((e) => {
-        if (
-          constraintCheck(e.metadata, op) &&
-          floor_warriors.length <= config.floor_cap
-        ) {
-          /* If rarity matches query then add them to the chart */
-          floor_warriors.push(e);
-        }
-      });
-    });
-    cnft_page++;
-  }
-  return floor_warriors;
-}
+/* Imports */
 
 /* Main */
 module.exports = {
@@ -269,16 +62,15 @@ module.exports = {
     let warrior_options = interaction.options._hoistedOptions;
     let rarity_select = null;
     let class_select = null;
-		let number_select = null;
+    let number_select = null;
     let item_query_select = null;
 
-		try {
+    try {
       number_select = warrior_options
         .filter((e) => e.name === "items_number")[0]
         .value.toLowerCase();
       filters = filters + number_select + " items / ";
     } catch (err) {}
-
 
     try {
       rarity_select = warrior_options
@@ -331,7 +123,7 @@ module.exports = {
 
     // If all test pass then continue
     if (!collision && test_class && test_item) {
-      console.log(warrior_options);
+			console.log(warrior_options)
       let warriors = await findFloor(warrior_options);
 
       if (warriors.length != 0) {
@@ -346,4 +138,3 @@ module.exports = {
     }
   },
 };
-

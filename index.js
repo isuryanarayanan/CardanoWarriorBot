@@ -1,43 +1,42 @@
-// Imports
 require("dotenv").config();
-const BOT_TOKEN = process.env["BOT_TOKEN"];
-const fs = require("fs");
-const { Client, Collection, Intents } = require("discord.js");
 
-// Client Setup
+const GUILD_ID = process.env["DEV_GUILD_ID"];
+const BOT_TOKEN = process.env["DEV_BOT_TOKEN"];
+
+const { Client, Collection, Intents } = require("discord.js");
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
 // Creating command collection
-client.commands = new Collection();
+// Each file under the commands folder
+// with a .js extention will be deployed as a command
+const fs = require("fs");
 const commandFiles = fs
   .readdirSync("./commands")
   .filter((file) => file.endsWith(".js"));
+client.commands = new Collection();
 
-// For all command files deploy each one
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
   client.commands.set(command.data.name, command);
 }
 
-// Ready to go
 client.once("ready", () => {
   client.user.setActivity("/help");
-  console.log("Ready!");
+  // Used to deploy the #floor feature
+  // where the floor data for each rarity is
+  // show at a periodic interval
+	const { floorChannel } = require("./channels/floor.js");
+  floorChannel(client);
 });
 
-//slight edit
-// Interaction endpoint
 client.on("interactionCreate", async (interaction) => {
-	
   if (!interaction.isCommand()) return;
 
-  // Get command details from collection
   const command = client.commands.get(interaction.commandName);
 
   if (!command) return;
 
   try {
-    // Execute logic from command body
     await command.execute(interaction);
   } catch (error) {
     console.error(error);
@@ -48,5 +47,4 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-// Login for the bot
 client.login(BOT_TOKEN);

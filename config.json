@@ -1,0 +1,6 @@
+{
+  "endpoints": {
+    "getAssets": "https://cardano-mainnet.blockfrost.io/api/v0/assets",
+    "cnftListings": "https://api.cnft.io/market/listings/"
+  }
+}

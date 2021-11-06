@@ -3,21 +3,22 @@ require("dotenv").config();
 const fs = require("fs");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
-// DEV
-//const CLIENT_ID = process.env["CLIENT_ID"];
-//const GUILD_ID = process.env["GUILD_ID"];
-//const BOT_TOKEN = process.env["BOT_TOKEN"];
 
-// DEV MAIN BOT
-//const CLIENT_ID = process.env["CLIENT_ID3"];
-//const GUILD_ID = process.env["GUILD_ID3"];
-//const BOT_TOKEN = process.env["BOT_TOKEN3"];
+// Development Bot to the development server
+const CLIENT_ID = process.env["DEV_CLIENT_ID"];
+const GUILD_ID = process.env["DEV_GUILD_ID"];
+const BOT_TOKEN = process.env["DEV_BOT_TOKEN"];
+
+// Deployment Bot to the development server
+//const CLIENT_ID = process.env["DEP_CLIENT_ID"];
+//const GUILD_ID = process.env["DEV_GUILD_ID"];
+//const BOT_TOKEN = process.env["DEP_BOT_TOKEN"];
 
 
-// MAIN
-const CLIENT_ID = process.env["CLIENT_ID2"];
-const GUILD_ID = process.env["GUILD_ID2"];
-const BOT_TOKEN = process.env["BOT_TOKEN2"];
+// Deployment Bot to Deployment server
+//const CLIENT_ID = process.env["DEP_CLIENT_ID"];
+//const GUILD_ID = process.env["DEP_GUILD_ID"];
+//const BOT_TOKEN = process.env["DEP_BOT_TOKEN"];
 
 
 // Setup

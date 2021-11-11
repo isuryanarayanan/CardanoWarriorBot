@@ -27,18 +27,18 @@ function userLimitTest(userId) {
 
 /* Cardano Warrior explorer */
 async function getAssets(tag, tags, interaction) {
-	// Sends an embed containing information about,
-	// a cardano warrior with the given id
-	const warrior_embed = new MessageEmbed();
+  // Sends an embed containing information about,
+  // a cardano warrior with the given id
+  const warrior_embed = new MessageEmbed();
 
   await getBlockfrostAsset(tag).then(async (cnft_warrior) => {
-		// Using the blockfrost api the bot takes the tag that
-		// is given here, and returns a promise which on resolving
-		// gives the information about a warrior.
+    // Using the blockfrost api the bot takes the tag that
+    // is given here, and returns a promise which on resolving
+    // gives the information about a warrior.
 
     var response = JSON.parse(cnft_warrior.response);
 
-		// Creating the embed based on the warrior data
+    // Creating the embed based on the warrior data
     warrior_embed
       .setColor("#0099ff")
       .setDescription(
@@ -80,7 +80,7 @@ async function getAssets(tag, tags, interaction) {
         common_items = common_items + "\n" + e.name;
       }
       if (mythical_items != "") {
-        uncommon_items = uncommon_items + "\n" + e.name;
+        //while (listings.results.length != 0) {
       }
       if (e.rarity == "Rare") {
         rare_items = rare_items + "\n" + e.name;
@@ -142,33 +142,20 @@ async function getAssets(tag, tags, interaction) {
           var page = 1;
           var warrior = undefined;
 
-          while (listings.results.length != 0) {
-            listings.results.forEach((listed) => {
-              if (listed.asset.metadata.name == "Cardano Warrior #" + tag) {
-                warrior = listed;
-                listings.assets = [];
-              }
-            });
-
-            if (warrior == undefined) {
-              page++;
-              listings = await crawlCNFT({ page: page, search: tag }).then(
-                (data) => {
-                  return JSON.parse(data.response);
-                }
-              );
-            }
+          if (listings.results.length == 1) {
+            warrior = listings.results[0];
+          } else {
+            warrior = undefined;
           }
 
           if (warrior != undefined) {
-            console.log("warrior found");
             warrior_embed.setDescription(
-              warrior.metadata["name"] +
+              warrior.asset.metadata["name"] +
                 " listed for " +
                 warrior.price / 1000000 +
                 " here " +
-                "https://cnft.io/token.php?id=" +
-                warrior.id
+                "https://cnft.io/token/" +
+                warrior._id
             );
             msg.edit({ embeds: [warrior_embed] });
           } else {
@@ -195,7 +182,7 @@ module.exports = {
         .setRequired(true)
     ),
   async execute(interaction) {
-		// Tests user rate limits
+    // Tests user rate limits
     if (userLimitTest(interaction.user.id)) {
       users[interaction.user.id].lastUsed = Date.now();
       const input = interaction.options.getString("warrior_id");

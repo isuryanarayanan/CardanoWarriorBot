@@ -1,6 +1,16 @@
 {
   "endpoints": {
     "getAssets": "https://cardano-mainnet.blockfrost.io/api/v0/assets",
+    "getWalletDetails": "https://cardano-mainnet.blockfrost.io/api/v0/addresses",
+    "getStakeWalletDetails": "https://cardano-mainnet.blockfrost.io/api/v0/accounts",
     "cnftListings": "https://api.cnft.io/market/listings/"
+  },
+  "warrior_points": {
+    "Common": 12,
+    "Uncommon": 15,
+    "Rare": 20,
+    "Epic": 30,
+    "Legendary": 80,
+    "Mythical": 110
   }
 }

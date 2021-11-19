@@ -16,6 +16,14 @@ function hexIt(str) {
   return hex;
 }
 
+function hexDecodeIt(hex) {
+  var hex = hex.toString(); //force conversion
+  var str = "";
+  for (var i = 0; i < hex.length; i += 2)
+    str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+  return str;
+}
+
 function parseTagsFromString(str) {
   // takes a string and parse it into query tags
   var splittedStr = str.split(",");
@@ -33,4 +41,4 @@ function parseTagsFromString(str) {
 
   return verifiedTags.splice(0, 3);
 }
-module.exports = { arrayRemove, hexIt, parseTagsFromString };
+module.exports = { arrayRemove, hexIt, parseTagsFromString, hexDecodeIt };

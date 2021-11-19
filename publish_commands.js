@@ -5,14 +5,14 @@ const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 
 // Development Bot to the development server
-const CLIENT_ID = process.env["DEV_CLIENT_ID"];
-const GUILD_ID = process.env["DEV_GUILD_ID"];
-const BOT_TOKEN = process.env["DEV_BOT_TOKEN"];
+//const CLIENT_ID = process.env["DEV_CLIENT_ID"];
+//const GUILD_ID = process.env["DEV_GUILD_ID"];
+//const BOT_TOKEN = process.env["DEV_BOT_TOKEN"];
 
 // Deployment Bot to the development server
-//const CLIENT_ID = process.env["DEP_CLIENT_ID"];
-//const GUILD_ID = process.env["DEV_GUILD_ID"];
-//const BOT_TOKEN = process.env["DEP_BOT_TOKEN"];
+const CLIENT_ID = process.env["DEP_CLIENT_ID"];
+const GUILD_ID = process.env["DEV_GUILD_ID"];
+const BOT_TOKEN = process.env["DEP_BOT_TOKEN"];
 
 
 // Deployment Bot to Deployment server

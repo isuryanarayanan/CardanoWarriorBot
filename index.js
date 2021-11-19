@@ -25,7 +25,7 @@ client.once("ready", () => {
   // Used to deploy the #floor feature
   // where the floor data for each rarity is
   // show at a periodic interval
-	const { floorChannel } = require("./channels/floor.js");
+  const { floorChannel } = require("./channels/floor.js");
   floorChannel(client);
 });
 

@@ -38,6 +38,7 @@ function crawlCNFT(filters) {
     if (filters.search) {
       params.search = "CardanoWarrior" + filters.search;
     }
+		
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onload = () => {
       resolve(xhr);

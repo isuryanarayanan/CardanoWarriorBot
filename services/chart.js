@@ -1,14 +1,11 @@
-/* Imports */
+/*
+ * This module deals with the chart embed that is used in the floor command.
+ * Information about listings are passed into this module and a chart is generated 
+ * using chart.js renderToBuffer method.
+ */
 const { MessageEmbed, MessageAttachment } = require("discord.js");
 const { CanvasRenderService } = require("chartjs-node-canvas");
-/* Imports */
-
-/* Setup and essential variables */
-const config = {
-  floor_cap: 9,
-  floor_chart_height: 500,
-  floor_chart_width: 1000,
-};
+const config = require("../config.json");
 
 const chartCallback = (ChartJS) => {
   ChartJS.plugins.register({
@@ -20,7 +17,6 @@ const chartCallback = (ChartJS) => {
     },
   });
 };
-/* Setup and essential variables */
 
 
 async function chartBuilder(warriors) {
@@ -40,8 +36,8 @@ async function chartBuilder(warriors) {
 
 
   const canvas = new CanvasRenderService(
-    config.floor_chart_width,
-    config.floor_chart_height,
+    config.chart.floor_chart_width,
+    config.chart.floor_chart_height,
     chartCallback
   );
   const configuration = {

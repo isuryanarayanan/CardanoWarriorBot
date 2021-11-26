@@ -1,3 +1,10 @@
+/*
+ *
+ * This module handles all the miscellaneous methods used commonly
+ * throughout the bot. Like array operations, parsing, encode-decode etc.
+ *
+ */
+
 function arrayRemove(arr, value) {
   // Removes value from array arr
 
@@ -17,6 +24,7 @@ function hexIt(str) {
 }
 
 function hexDecodeIt(hex) {
+  // Returns a hex decoded value of a hex encoded string
   var hex = hex.toString(); //force conversion
   var str = "";
   for (var i = 0; i < hex.length; i += 2)

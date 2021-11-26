@@ -1,16 +1,45 @@
-/* Imports */
+/*
+ *
+ * What happens in the floor command.
+ *
+ * When a user summons the bot through the floor command
+ * there are is a filter list that is being passed from 
+ * the client. For a normal summon with no filters the 
+ * list will look like this '[]', but on adding filters
+ * the filter list will contain the filter information.
+ *
+ * So what the floor command logic does is it parses these 
+ * filters and crawls cnft.io's listing API to find listings
+ * for CardanoWarriors that matches the filters provided.
+ *
+ * When the filter list has for exmaple, 
+ * [
+ * 	{ name: 'items_number', type: 'STRING', value: '7' },
+ * 	{ name: 'items_query', type: 'STRING', value: [ 'cross shield' ] }
+ * ]
+ *
+ * the bot will be crawling for listings which match these 
+ * requirements. On finding a match it will add the listing to a
+ * chart and send it over as an embed.
+ *
+ *
+ */
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { findFloor } = require("../services/cnft.js");
 const { arrayRemove } = require("../services/misc.js");
 const { chartBuilder } = require("../services/chart.js");
-const rarities_json = require("../rarities.json");
 
+// Loading rarity information
+const rarities_json = require("../rarities.json");
 const warrior_classes = rarities_json.warrior_classes;
 const item_classes = rarities_json.item_classes;
 const warrior_rarities = rarities_json.warrior_rarity;
-/* Imports */
 
-/* Main */
+// The options menu for the command includes the parameters
+// warrior_rarity | Rarity of Warriors.
+// warrior_class  | Class of Warriors.
+// items_number   | Number of items on the Warrior.
+// items_query    | Item name.
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("floor")
@@ -53,13 +82,18 @@ module.exports = {
     ),
   async execute(interaction) {
     await interaction.reply("looking through cardania...");
+    let warrior_options = interaction.options._hoistedOptions;
+
+		// Collision means the state when bot the command for
+		// warrior rarity and warrior class is given so collision 
+		// checks for if the class is inside the rarity that is also 
+		// selected.
 
     let collision = false;
     let test_class = true;
     let test_item = true;
     let filters = "";
 
-    let warrior_options = interaction.options._hoistedOptions;
     let rarity_select = null;
     let class_select = null;
     let number_select = null;
@@ -90,7 +124,10 @@ module.exports = {
     } catch (err) {}
 
     try {
-      item_query_select = warrior_options
+			// On the item query filter multiple items can be 
+			// queried using commas, here each item is parsed into
+			// format for the bot to understand.
+			item_query_select = warrior_options
         .filter((e) => e.name === "items_query")[0]
         .value.toLowerCase();
 
@@ -123,10 +160,11 @@ module.exports = {
 
     // If all test pass then continue
     if (!collision && test_class && test_item) {
-			console.log(warrior_options)
+			// Finding the floor listings
       let warriors = await findFloor(warrior_options);
 
       if (warriors.length != 0) {
+				// Builds and send chart of the listings
         let chart = await chartBuilder(warriors);
         await interaction.editReply(filters + "floor is " + chart.floor_price);
         await interaction.editReply({ files: [chart.attatchment] });

@@ -1,17 +1,48 @@
 require("dotenv").config();
+
+/*
+ * How the #floor channel works is that the bot
+ * stores a channel id in the system variables, this channel
+ * id can be the channel which is created to show the floor
+ * information and on the first execution the bot will call
+ * this module, and the module will forever execute within the
+ * time interval which is 10 mins based on discord API limits.
+ *
+ * What the module does is look for if the message id is
+ * stored in the system variables or not, if not it will
+ * look through all the messages in the channel for a flag.
+ * This flag is also stored in the system variables.
+ *
+ * On finding a message with a flag it will load that message
+ * id onto the variable. If there is no message then the bot will
+ * send a message to the channel with the flag.
+ *
+ * Once the message id is stored and available to the bot, it will
+ * on each iteration send an embed containing the floor information
+ * to that channel.
+ *
+ */
+
+// loading variables to state
 const GUILD_ID = process.env["DEV_GUILD_ID"];
 const CLIENT_ID = process.env["DEV_CLIENT_ID"];
 const FLOOR_CHANNEL_ID = process.env["DEV_FLOOR_CHANNEL_ID"];
 const FLOOR_CHANNEL_MESSAGE_ID = process.env["DEV_FLOOR_CHANNEL_MESSAGE_ID"];
-const FLOOR_CHANNEL_MESSAGE_TIMER = process.env["DEV_FLOOR_CHANNEL_MESSAGE_TIMER"];
+const FLOOR_CHANNEL_MESSAGE_TIMER =
+  process.env["DEV_FLOOR_CHANNEL_MESSAGE_TIMER"];
 const FLOOR_CHANNEL_MESSAGE_FLAG =
   process.env["DEV_FLOOR_CHANNEL_MESSAGE_FLAG"];
+
+// Helper functions
 const { crawlCNFT, findFloor } = require("../services/cnft.js");
 const { MessageEmbed } = require("discord.js");
 
 async function updateMessage(message) {
   // Update the floor embed with new data
   const floor_embed = new MessageEmbed();
+  var prices = {};
+
+  // Creating the embed
   floor_embed
     .setColor("#0099ff")
     .setDescription(
@@ -21,37 +52,44 @@ async function updateMessage(message) {
     .setURL("https://cardanowarriors.io")
     .setTimestamp()
     .setFooter("Bot by !suryan | Last updated ");
-  var prices = {};
+
+  // Updating the floor price for each class of warriors
+
   prices.common = findFloor([{ name: "warrior_rarity", value: "Common" }]).then(
     (data) => {
       floor_embed.addField("Common", data[0].price / 1000000 + " ADA", true);
       message.edit({ embeds: [floor_embed] });
     }
   );
+
   prices.uncommon = findFloor([
     { name: "warrior_rarity", value: "Uncommon" },
   ]).then((data) => {
     floor_embed.addField("Uncommon", data[0].price / 1000000 + " ADA", true);
     message.edit({ embeds: [floor_embed] });
   });
+
   prices.rare = findFloor([{ name: "warrior_rarity", value: "Rare" }]).then(
     (data) => {
       floor_embed.addField("Rare", data[0].price / 1000000 + " ADA", true);
       message.edit({ embeds: [floor_embed] });
     }
   );
+
   prices.epic = findFloor([{ name: "warrior_rarity", value: "Epic" }]).then(
     (data) => {
       floor_embed.addField("Epic", data[0].price / 1000000 + " ADA", true);
       message.edit({ embeds: [floor_embed] });
     }
   );
+
   prices.legendary = findFloor([
     { name: "warrior_rarity", value: "Legendary" },
   ]).then((data) => {
     floor_embed.addField("Legendary", data[0].price / 1000000 + " ADA", true);
     message.edit({ embeds: [floor_embed] });
   });
+
   prices.mythical = findFloor([
     { name: "warrior_rarity", value: "Mythical" },
   ]).then((data) => {
@@ -59,6 +97,7 @@ async function updateMessage(message) {
     message.edit({ embeds: [floor_embed] });
   });
 
+	// Editing the message to show new embed
   message.edit({ embeds: [floor_embed] });
 }
 
@@ -107,34 +146,39 @@ async function findMessage(channel) {
 }
 
 function floorChannel(client) {
-  // Check if FLOOR_CHANNEL_MESSAGE_ID is null or not
-  // if null, then load it from environment variables
-  // if no variable found then search through the channel for flag
-  // if no flag is found then send a message with the flag
 
   var server = client.guilds.cache.get(GUILD_ID);
   var channel = server.channels.cache.get(FLOOR_CHANNEL_ID);
   var message = undefined;
+
   if (channel) {
-    channel.edit({ name: `floor` }, "basic update");
+
+		channel.edit({ name: `floor` }, "basic update");
 
     setInterval(async () => {
-      // The floor channel setup
+
       const floor_price = await crawlCNFT({ page: 1 }).then((data) => {
-        var resp = JSON.parse(data.response);
-        return Math.floor(resp.results[0].price / 1000000);
+        // Gets the floor price for updating the channel name
+        return Math.floor(JSON.parse(data.response).results[0].price / 1000000);
       });
+
+      // Updating the channel name
       channel
-        .edit({ name: `floor - ${floor_price}` }, "Floor update")
+				.edit({ name: `floor - ${floor_price}` }, "Floor update")
         .catch(console.error);
+
+      // Finding the message in the channel with the flag
+      // or creating it if not found, anyways returning a
+      // message id.
       message = await findMessage(channel);
+
       if (message) {
+        // If the message id is returned successfully update
+        // the message with real-time floor information
         updateMessage(message);
       }
     }, FLOOR_CHANNEL_MESSAGE_TIMER);
   }
 }
-
-
 
 module.exports = { floorChannel };

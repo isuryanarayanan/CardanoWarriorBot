@@ -1,17 +1,25 @@
-/* Imports */
+/*
+ * The search command is a way to quickly explore the CardanoWarrior NFT's.
+ * Using the unique id that is available for each warrior, this command uses the
+ * blockfrost api to get details about that warrior and also uses the cnft.io api
+ * to see if the warrior is listed for sale. And collectively show all this information
+ * in an embed which is returned to the channel as output.
+ *
+ * This command is also rate limited by 30 seconds, ie same user can only call the
+ * search command only once every 30 seconds. But they can search upto 3 warriors in the
+ * same command by seperating the id's with a comma.
+ *
+ */
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { MessageEmbed } = require("discord.js");
 const { crawlCNFT } = require("../services/cnft.js");
 const { getBlockfrostAsset } = require("../services/blockfrost.js");
 const { arrayRemove, parseTagsFromString } = require("../services/misc.js");
-/* Imports */
 
-/* Setup */
 var finish = false;
 var users = {};
 var timeout = 0;
 var timelimit = 30000;
-/* Setup */
 
 function userLimitTest(userId) {
   if (users[userId]) {
@@ -25,7 +33,6 @@ function userLimitTest(userId) {
   return true;
 }
 
-/* Cardano Warrior explorer */
 async function getAssets(tag, tags, interaction) {
   // Sends an embed containing information about,
   // a cardano warrior with the given id
@@ -70,17 +77,19 @@ async function getAssets(tag, tags, interaction) {
     var epic_items = "";
     var legendary_items = "";
     var mythical_items = "";
+
     warrior_embed.addField(
       "Items",
       response.onchain_metadata.items.length.toString(),
       false
     );
+
     response.onchain_metadata.items.forEach((e) => {
       if (e.rarity == "Common") {
         common_items = common_items + "\n" + e.name;
       }
-      if (mythical_items != "") {
-        //while (listings.results.length != 0) {
+      if (e.rarity == "Uncommon") {
+        uncommon_items = uncommon_items + "\n" + e.name;
       }
       if (e.rarity == "Rare") {
         rare_items = rare_items + "\n" + e.name;
@@ -96,6 +105,7 @@ async function getAssets(tag, tags, interaction) {
       }
       items.push({ name: e.name, value: e.rarity, inline: true });
     });
+
     if (common_items != "") {
       warrior_embed.addField("Common", common_items, (inline = true));
     }
@@ -168,9 +178,7 @@ async function getAssets(tag, tags, interaction) {
       });
   });
 }
-/* Cardano Warrior explorer */
 
-/* Main */
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("search")
@@ -187,6 +195,7 @@ module.exports = {
       users[interaction.user.id].lastUsed = Date.now();
       const input = interaction.options.getString("warrior_id");
 
+			// Returns parsed and validated warrior tags 
       var tags = parseTagsFromString(input);
 
       if (tags.length == 0) {
@@ -207,4 +216,3 @@ module.exports = {
     }
   },
 };
-/* Main */

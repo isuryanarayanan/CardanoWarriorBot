@@ -12,5 +12,10 @@
     "Epic": 30,
     "Legendary": 80,
     "Mythical": 110
+  },
+  "chart": {
+    "floor_cap": 9,
+    "floor_chart_height": 500,
+    "floor_chart_width": 1000
   }
 }

@@ -54,7 +54,6 @@ async function updateMessage(message) {
     .setFooter("Bot by !suryan | Last updated ");
 
   // Updating the floor price for each class of warriors
-
   prices.common = findFloor([{ name: "warrior_rarity", value: "Common" }]).then(
     (data) => {
       floor_embed.addField("Common", data[0].price / 1000000 + " ADA", true);
@@ -144,6 +143,7 @@ async function findMessage(channel) {
 
   return message;
 }
+
 
 function floorChannel(client) {
 

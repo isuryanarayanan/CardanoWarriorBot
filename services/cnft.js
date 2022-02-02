@@ -67,6 +67,7 @@ function crawlCNFT(filters) {
 function constraintCheck(asset, constraints) {
   // Checks if the query constraints
   // will pass for a warrior metadata
+	
 
   let test_items_number = true;
   let test_items_query = true;
@@ -75,18 +76,18 @@ function constraintCheck(asset, constraints) {
 
   constraints.forEach((test) => {
     if (test.name == "warrior_rarity") {
-      test_warrior_rarity = asset.metadata.rarity == test.value;
+      test_warrior_rarity = asset[0].metadata.rarity == test.value;
     }
     if (test.name == "warrior_class") {
-      test_warrior_class = asset.metadata.type.toLowerCase() == test.value;
+      test_warrior_class = asset[0].metadata.type.toLowerCase() == test.value;
     }
     if (test.name == "items_number") {
-      test_items_number = asset.metadata.items.length == test.value;
+      test_items_number = asset[0].metadata.items.length == test.value;
     }
     if (test.name == "items_query") {
       test.value.forEach((query) => {
         if (
-          !asset.metadata.items.filter((e) => e.name.toLowerCase() === query)
+					!asset[0].metadata.items.filter((e) => e.name.toLowerCase() === query)
             .length > 0
         ) {
           test_items_query = false;
@@ -125,7 +126,7 @@ async function findFloor(op = undefined) {
 
       await response.results.forEach((e) => {
         if (
-          constraintCheck(e.asset, op) &&
+					constraintCheck(e.assets, op) &&
           floor_warriors.length <= config.chart.floor_cap
         ) {
           //If rarity matches query then add them to the chart

@@ -26,11 +26,12 @@ async function chartBuilder(warriors) {
   let chart_price = [];
   let chart_listing = [];
 
+	console.log(warriors)
   warriors.forEach((asset) => {
     // parses price data and listing data
     chart_price.push(asset.price / 1000000);
     chart_listing.push(
-      asset.asset.metadata.type+ "\n#" + asset.asset.metadata.id
+			asset.assets[0].metadata.type+ "\n#" + asset.assets[0].metadata.id
     );
   });
 

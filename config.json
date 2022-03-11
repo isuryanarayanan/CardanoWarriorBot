@@ -3,7 +3,9 @@
     "getAssets": "https://cardano-mainnet.blockfrost.io/api/v0/assets",
     "getWalletDetails": "https://cardano-mainnet.blockfrost.io/api/v0/addresses",
     "getStakeWalletDetails": "https://cardano-mainnet.blockfrost.io/api/v0/accounts",
-    "cnftListings": "https://api.cnft.io/market/listings/"
+    "cnftListings": "https://api.cnft.io/market/listings/",
+    "jpgListings": "https://jpg.store/api/policy/8f80ebfaf62a8c33ae2adf047572604c74db8bc1daba2b43f9a65635/listings",
+    "jpgAssets": "https://jpg.store/api/asset/"
   },
   "warrior_points": {
     "Common": 12,

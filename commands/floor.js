@@ -25,7 +25,7 @@
  *
  */
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { findFloor } = require("../services/cnft.js");
+const { findFloor } = require("../markets/market.js");
 const { arrayRemove } = require("../services/misc.js");
 const { chartBuilder } = require("../services/chart.js");
 

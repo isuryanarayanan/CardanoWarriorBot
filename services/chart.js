@@ -26,7 +26,6 @@ async function chartBuilder(warriors) {
   let chart_price = [];
   let chart_listing = [];
 
-	console.log(warriors)
   warriors.forEach((asset) => {
     // parses price data and listing data
     chart_price.push(asset.price / 1000000);
@@ -34,7 +33,6 @@ async function chartBuilder(warriors) {
 			asset.assets[0].metadata.type+ "\n#" + asset.assets[0].metadata.id
     );
   });
-
 
   const canvas = new CanvasRenderService(
     config.chart.floor_chart_width,

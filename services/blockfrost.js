@@ -9,7 +9,7 @@
  *   API query to '/addresses/assets' which will return all the information
  *   about assets which the wallet holds.
  *
- * - getWalletDetails 
+ * - getWalletDetails
  *
  *   This method uses a wallet address that starts with 'addr' and returns
  *   a promise containing the stake address for that wallet address
@@ -26,15 +26,19 @@ const XMLHttpRequest = require("xhr2");
 const { hexIt } = require("../services/misc.js");
 
 function getStakeWalletDetails(tag, page) {
-	// Stake wallet is passed in and the information about that wallets contents
-	// are returned in a promise instance. Blockfrost only shows 100 assets per page
-	// if the number of assets in a wallet exceeds that then it will be available in
-	// the next page, The page variable is to determine which page to look for
+  // Stake wallet is passed in and the information about that wallets contents
+  // are returned in a promise instance. Blockfrost only shows 100 assets per page
+  // if the number of assets in a wallet exceeds that then it will be available in
+  // the next page, The page variable is to determine which page to look for
   let xhr = new XMLHttpRequest();
   let promise = new Promise((resolve, reject) => {
     xhr.open(
       "GET",
-      config.endpoints.getStakeWalletDetails + "/" + tag + "/addresses/assets?page="+page
+      config.endpoints.getStakeWalletDetails +
+        "/" +
+        tag +
+        "/addresses/assets?page=" +
+        page
     );
     xhr.setRequestHeader("Content-Type", "Application/json");
     xhr.setRequestHeader("project_id", project_id);
@@ -50,9 +54,9 @@ function getStakeWalletDetails(tag, page) {
 }
 
 function getWalletDetails(tag) {
-	// This method uses the wallet endpoint and a valid wallet address as parameter
-	// to return the details of the wallet allongside its stake wallet address, which
-	// is further used to get all assets belonging to that wallet
+  // This method uses the wallet endpoint and a valid wallet address as parameter
+  // to return the details of the wallet allongside its stake wallet address, which
+  // is further used to get all assets belonging to that wallet
   let xhr = new XMLHttpRequest();
   let promise = new Promise((resolve, reject) => {
     xhr.open("GET", config.endpoints.getWalletDetails + "/" + tag);
@@ -70,8 +74,8 @@ function getWalletDetails(tag) {
 }
 
 function getBlockfrostAsset(tag) {
-	// This method uses the CardanoWarriors policy id to retrieve the warrior information
-	// with the unique id of each warrior.
+  // This method uses the CardanoWarriors policy id to retrieve the warrior information
+  // with the unique id of each warrior.
   let xhr = new XMLHttpRequest();
   let promise = new Promise((resolve, reject) => {
     xhr.open(
@@ -95,6 +99,6 @@ function getBlockfrostAsset(tag) {
 
 module.exports = {
   getStakeWalletDetails,
-  getBlockfrostAsset,
   getWalletDetails,
+  getBlockfrostAsset,
 };

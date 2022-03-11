@@ -8,7 +8,6 @@
  */
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { MessageEmbed } = require("discord.js");
-const { crawlCNFT } = require("../services/cnft.js");
 const { hexDecodeIt } = require("../services/misc.js");
 const {
   getWalletDetails,

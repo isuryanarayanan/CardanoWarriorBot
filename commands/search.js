@@ -12,7 +12,6 @@
  */
 const { SlashCommandBuilder } = require("@discordjs/builders");
 const { MessageEmbed } = require("discord.js");
-const { crawlCNFT } = require("../services/cnft.js");
 const { getBlockfrostAsset } = require("../services/blockfrost.js");
 const { arrayRemove, parseTagsFromString } = require("../services/misc.js");
 
@@ -143,39 +142,7 @@ async function getAssets(tag, tags, interaction) {
     warrior_embed.addField("Traits", traits_reply);
 
     // Sending the embed
-    await interaction.channel
-      .send({ embeds: [warrior_embed] })
-      .then(async (msg) => {
-        await crawlCNFT({ page: 1, search: tag }).then(async (cnft_data) => {
-          // Crawling CNFT.io and updating the embed after sending
-          var listings = JSON.parse(cnft_data.response);
-          var page = 1;
-          var warrior = undefined;
-
-          if (listings.results.length == 1) {
-            warrior = listings.results[0];
-          } else {
-            warrior = undefined;
-          }
-
-          if (warrior != undefined) {
-            warrior_embed.setDescription(
-              warrior.asset.metadata["name"] +
-                " listed for " +
-                warrior.price / 1000000 +
-                " here " +
-                "https://cnft.io/token/" +
-                warrior._id
-            );
-            msg.edit({ embeds: [warrior_embed] });
-          } else {
-            warrior_embed.setDescription(
-              "No active listing found for CardanoWarrior#" + tag
-            );
-            msg.edit({ embeds: [warrior_embed] });
-          }
-        });
-      });
+    await interaction.channel.send({ embeds: [warrior_embed] });
   });
 }
 
@@ -195,7 +162,7 @@ module.exports = {
       users[interaction.user.id].lastUsed = Date.now();
       const input = interaction.options.getString("warrior_id");
 
-			// Returns parsed and validated warrior tags 
+      // Returns parsed and validated warrior tags
       var tags = parseTagsFromString(input);
 
       if (tags.length == 0) {

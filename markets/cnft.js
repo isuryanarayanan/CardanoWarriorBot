@@ -1,35 +1,33 @@
 /*
  *
- * This module handles work that involves cnft.io API's
+ * CNFT.io market engine
  *
- * There are two main function that is being exported from this module,
+ * API endpoint: https://api.cnft.io/market/listings/
+ *               config.endpoints.cnftListings
  *
- * - crawlCNFT
+ * API architecture: The cnft api is weird, they never forget to change
+ * it in every update. basically you can use a POST request to the endpoint
+ * to get the listings and use certain filters in the form of json objects in
+ * the body.
  *
- *   this function uses the cnft.io API to make a query and return
- *   the result as a promise. On resolving the returned promise
- *   the information returned from the API is shown.
+ * Engine architecture: The CNFTEngine is the main method exported, it can handle
+ * the scraping, searching and formatting the data from the cnft.io api.
  *
- * - findFloor
- *
- *   This function will recursively use the crawlCNFT function and looks for
- *   listings that matches the constraints that are passed.
- *
- *
+ * Available methods include:
+ * - CNFTEngine.crawl
+ * - CNFTEngine.floor(options)
  */
-const { arrayRemove } = require("./misc.js");
-const { chartBuilder } = require("./chart.js");
-const XMLHttpRequest = require("xhr2");
 
-// Loading rarity information and other system variables
+const XMLHttpRequest = require("xhr2");
+const config = require("../config.json");
 const rarities_json = require("../rarities.json");
-const warrior_classes = rarities_json.warrior_classes;
+const { arrayRemove } = require("../services/misc.js");
+const project_id = process.env["BLOCKFROST_PROJECT_ID"];
 const item_classes = rarities_json.item_classes;
 const warrior_rarities = rarities_json.warrior_rarity;
-const project_id = process.env["BLOCKFROST_PROJECT_ID"];
-const config = require("../config.json");
+const warrior_classes = rarities_json.warrior_classes;
 
-function crawlCNFT(filters) {
+function crawl(filters) {
   // Crawls CNFT.io marketplace with filters passed in
 
   let xhr = new XMLHttpRequest();
@@ -46,6 +44,7 @@ function crawlCNFT(filters) {
       nsfw: false,
       sold: false,
     };
+
     if (filters.search) {
       params.search = "CardanoWarrior" + filters.search;
     }
@@ -67,7 +66,6 @@ function crawlCNFT(filters) {
 function constraintCheck(asset, constraints) {
   // Checks if the query constraints
   // will pass for a warrior metadata
-	
 
   let test_items_number = true;
   let test_items_query = true;
@@ -87,7 +85,7 @@ function constraintCheck(asset, constraints) {
     if (test.name == "items_query") {
       test.value.forEach((query) => {
         if (
-					!asset[0].metadata.items.filter((e) => e.name.toLowerCase() === query)
+          !asset[0].metadata.items.filter((e) => e.name.toLowerCase() === query)
             .length > 0
         ) {
           test_items_query = false;
@@ -105,7 +103,7 @@ function constraintCheck(asset, constraints) {
   );
 }
 
-async function findFloor(op = undefined) {
+async function floor(op = undefined) {
   let floor_warriors = [];
   let cnft_page = 1;
   let cnft_page_limit = 0;
@@ -116,7 +114,7 @@ async function findFloor(op = undefined) {
     floor_warriors.length <= config.chart.floor_cap &&
     !cnft_page_limit_hit
   ) {
-    await crawlCNFT({ page: cnft_page }).then(async (data) => {
+    await crawl({ page: cnft_page }).then(async (data) => {
       var response = JSON.parse(data.response);
 
       if (response.results.length == 0) {
@@ -126,7 +124,7 @@ async function findFloor(op = undefined) {
 
       await response.results.forEach((e) => {
         if (
-					constraintCheck(e.assets, op) &&
+          constraintCheck(e.assets, op) &&
           floor_warriors.length <= config.chart.floor_cap
         ) {
           //If rarity matches query then add them to the chart
@@ -139,4 +137,4 @@ async function findFloor(op = undefined) {
   return floor_warriors;
 }
 
-module.exports = { crawlCNFT, findFloor };
+module.exports = { crawl, floor };

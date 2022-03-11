@@ -1,5 +1,6 @@
 require("dotenv").config();
-const { floorChannel } = require("./channels/floor.js");
+
+//const { floorChannel } = require("./channels/floor.js");
 const { Client, Collection, Intents } = require("discord.js");
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 const fs = require("fs");
@@ -37,10 +38,11 @@ for (const file of commandFiles) {
 
 client.once("ready", () => {
   client.user.setActivity("/help");
+
   // Used to deploy the #floor feature
   // where the floor data for each rarity is
   // show at a periodic interval
-  floorChannel(client);
+  //floorChannel(client);
 });
 
 client.on("interactionCreate", async (interaction) => {

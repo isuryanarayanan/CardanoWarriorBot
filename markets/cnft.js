@@ -128,7 +128,11 @@ async function floor(op = undefined) {
           floor_warriors.length <= config.chart.floor_cap
         ) {
           //If rarity matches query then add them to the chart
-          floor_warriors.push(e);
+          floor_warriors.push({
+            price: e.price,
+            asset: e.assets[0].metadata,
+            market: e,
+          });
         }
       });
     });

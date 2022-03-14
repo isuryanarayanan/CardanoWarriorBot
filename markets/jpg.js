@@ -118,10 +118,14 @@ async function floor(op = undefined) {
       .then((data) => {
         var asset = JSON.parse(data.response);
         if (
-					constraintCheck(asset, op) &&
-					assets.length <= config.chart.floor_cap
+          constraintCheck(asset, op) &&
+          assets.length <= config.chart.floor_cap
         ) {
-          assets.push(asset);
+          assets.push({
+            price: asset.price_lovelace,
+            asset: asset.onchain_metadata,
+            market: asset,
+          });
         }
       })
       .catch((e) => {

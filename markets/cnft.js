@@ -132,6 +132,7 @@ async function floor(op = undefined) {
             price: e.price,
             asset: e.assets[0].metadata,
             market: e,
+            market_name: "cnft",
           });
         }
       });

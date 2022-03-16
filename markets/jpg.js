@@ -113,6 +113,8 @@ async function floor(op = undefined) {
     listings = JSON.parse(data.response);
   });
 
+  listings.sort((a, b) => (a.price_lovelace > b.price_lovelace ? 1 : -1));
+
   for (let i = 0; i < listings.length; i++) {
     await crawlAsset(listings[i].asset)
       .then((data) => {
@@ -122,14 +124,15 @@ async function floor(op = undefined) {
           assets.length <= config.chart.floor_cap
         ) {
           assets.push({
-            price: asset.price_lovelace,
+            price: parseInt(asset.price_lovelace),
             asset: asset.onchain_metadata,
             market: asset,
+						market_name:"jpg"
           });
         }
       })
       .catch((e) => {
-        console.log(e);
+				console.log(e);
       });
   }
 

@@ -30,7 +30,7 @@ async function chartBuilder(warriors) {
     // parses price data and listing data
     chart_price.push(asset.price / 1000000);
     chart_listing.push(
-			asset.assets[0].metadata.type+ "\n#" + asset.assets[0].metadata.id
+			asset.asset.type+ "\n#" + asset.asset.id
     );
   });
 

@@ -1,6 +1,6 @@
 /*
  * This module deals with the chart embed that is used in the floor command.
- * Information about listings are passed into this module and a chart is generated 
+ * Information about listings are passed into this module and a chart is generated
  * using chart.js renderToBuffer method.
  */
 const { MessageEmbed, MessageAttachment } = require("discord.js");
@@ -11,13 +11,13 @@ const chartCallback = (ChartJS) => {
   ChartJS.plugins.register({
     beforeDraw: (chartInstance) => {
       const { chart } = chartInstance;
-      const { ctx } = chart;
+      const { ctx, config } = chart;
+
       ctx.fillStyle = "black";
       ctx.fillRect(0, 0, chart.width, chart.height);
     },
   });
 };
-
 
 async function chartBuilder(warriors) {
   // Builds a bar chart with an array of
@@ -25,13 +25,20 @@ async function chartBuilder(warriors) {
 
   let chart_price = [];
   let chart_listing = [];
+  let chart_asset = [];
+  let chart_color = [];
 
   warriors.forEach((asset) => {
     // parses price data and listing data
     chart_price.push(asset.price / 1000000);
-    chart_listing.push(
-			asset.asset.type+ "\n#" + asset.asset.id
-    );
+    chart_listing.push(asset.asset.type + "\n#" + asset.asset.id);
+    if (asset.market_name == "jpg") {
+      chart_color.push("#4287f5");
+    }
+    if (asset.market_name == "cnft") {
+      chart_color.push("#42f5ef");
+    }
+    chart_asset.push(asset);
   });
 
   const canvas = new CanvasRenderService(
@@ -39,15 +46,24 @@ async function chartBuilder(warriors) {
     config.chart.floor_chart_height,
     chartCallback
   );
+
   const configuration = {
     type: "bar",
     data: {
       labels: chart_listing,
       datasets: [
         {
-          label: "Floor Cardano Warriors",
           data: chart_price,
-          backgroundColor: "#7289d9",
+          asset: chart_asset,
+          backgroundColor: chart_color,
+        },
+        {
+          label: "cnft",
+          backgroundColor: "#42f5ef",
+        },
+        {
+          label: "jpg",
+          backgroundColor: "#4287f5",
         },
       ],
     },
@@ -89,7 +105,7 @@ async function chartBuilder(warriors) {
   const image = await canvas.renderToBuffer(configuration);
   const attatchment = new MessageAttachment(image);
 
-  return { floor_price: chart_price[0], attatchment: attatchment };
+	return { floor_price: warriors[0].price / 1000000, attatchment: attatchment };
 }
 
 module.exports = { chartBuilder };
